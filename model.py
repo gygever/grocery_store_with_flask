@@ -1,13 +1,17 @@
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     userid = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
     order = db.relationship('Orders', backref='users', uselist=False)
+
+    def get_id(self):
+        return self.userid
 
 
 class Product(db.Model):
