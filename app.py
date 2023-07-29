@@ -51,5 +51,27 @@ def logout():
         return redirect(url_for('login'))
 
 
+@app.route('/sing_up', methods=['GET', 'POST'])
+def sing_up():
+    if current_user.is_authenticated:
+        return redirect(url_for('show'))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username and password:
+            if Users.query.filter_by(username=username).first():
+                flash(f'Username {username} not available')
+                return redirect(url_for('sing_up'))
+            if len(password) < 8:
+                flash('The password too short, min length 8')
+                return redirect(url_for('sing_up'))
+            else:
+                user = Users(username=username, password=password)
+                db.session.add(user)
+                db.session.commit()
+                return redirect(url_for('login'))
+    return render_template('sign_up.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
