@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="{{url_for('index')}}">
+    <button type="submit">Create new order</button>
+</form>
+{% for order in orders %}
+<h4>Order №{{order.orderid}}</h4>
+<ul>
+    {% for item in or_items %}
+    {% if item[0].orderid==order.orderid %}
+    {% for i in item %}
+    <li>
+        <div>
+            {{i.productname}}<br>
+            Quantity: {{i.quantity}}<br>
+            Price: {{i.price}}<br>
+        </div>
+    </li>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}

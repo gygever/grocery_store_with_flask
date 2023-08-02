@@ -25,10 +25,14 @@ class Product(db.Model):
 class Orders(db.Model):
     orderid = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.Integer, db.ForeignKey('users.userid'))
+    price = db.Column(db.Integer, nullable=False)
     order_item = db.relationship('Order_item', backref='orders', uselist=False)
 
 
 class Order_item(db.Model):
-    itemid = db.Column(db.BigInteger, primary_key=True)
+    itemid = db.Column(db.Integer, primary_key=True)
     productid = db.Column(db.Integer, db.ForeignKey('product.productid'))
     orderid = db.Column(db.Integer, db.ForeignKey('orders.orderid'))
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
+    productname = db.Column(db.String(255), nullable=False)

@@ -14,13 +14,17 @@ create table product(
 create table orders(
 	OrderId serial primary key,
 	UserId integer,
+	Price integer not null,
 	foreign key (UserId) references users(UserId)
 );
 
 create table order_item(
-	ItemId bigserial primary key,
+	ItemId serial primary key,
 	ProductId integer,
 	OrderId integer,
+	Quantity integer not null,
+	Price integer not null,
+    ProductName varchar(255) not null,
 	foreign key (ProductId) references product(ProductId),
 	foreign key (OrderId) references orders(OrderId)
 );
