@@ -21,5 +21,12 @@
     {% endif %}
     {% endfor %}
 </ul>
+<div>
+    Final price: {{order.price}}
+</div>
+<br>
+<form action="/delete/{{order.orderid}}" method="POST">
+    <button type="submit">Delete</button>
+</form>
 {% endfor %}
 {% endblock %}

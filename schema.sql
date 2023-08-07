@@ -24,7 +24,7 @@ create table order_item(
 	OrderId integer,
 	Quantity integer not null,
 	Price integer not null,
-    ProductName varchar(255) not null,
+	ProductName varchar(255) not null,
 	foreign key (ProductId) references product(ProductId),
 	foreign key (OrderId) references orders(OrderId)
 );

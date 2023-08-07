@@ -113,5 +113,14 @@ def order():
     return render_template('order.html', orders=orders, or_items=or_items)
 
 
+@app.route('/delete/<int:id_delete>', methods=['POST', 'GET'])
+def delete_order(id_delete):
+    Order_item.query.filter_by(orderid=id_delete).delete()
+    Orders.query.filter_by(orderid=id_delete).delete()
+    db.session.commit()
+    return redirect(url_for('order'))
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
