@@ -1,13 +1,15 @@
 from flask import Flask, render_template, url_for, request, flash, redirect
 from model import db, Users, Product, Orders, Order_item
 from config.config import DATABASE_URI, SECRET_KEY
-from flask_login import LoginManager, current_user, login_user, logout_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 
 app = Flask(__name__, template_folder='template')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 app.secret_key = SECRET_KEY
 db.init_app(app)
 login = LoginManager(app)
+login.login_view = 'login'
+login.login_message = "You aren't login"
 
 
 @login.user_loader
@@ -41,14 +43,11 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
-    if current_user.is_authenticated:
-        logout_user()
-        flash('You have been logged out!')
-        return redirect(url_for('index'))
-    else:
-        flash("You aren't login")
-        return redirect(url_for('login'))
+    logout_user()
+    flash('You have been logged out!')
+    return redirect(url_for('index'))
 
 
 @app.route('/sign_up', methods=['GET', 'POST'])
@@ -73,38 +72,40 @@ def sing_up():
     return render_template('sign_up.html')
 
 
-@app.route('/order', methods=['POST', 'GET'])
-def order():
-    if current_user.is_authenticated:
-        if request.method == 'POST':
-            form = request.form
-            order_product = []
-            for key in form.keys():
-                product = Product.query.filter_by(productid=key).first()
-                if product.quantity >= int(form[key]) > 0:
-                    order_product.append(product)
-                elif int(form[key]) != 0:
-                    flash(f'Wrong quantity of the product {product.productname}')
-                    return redirect(url_for('index'))
-            if order_product:
-                order = Orders(userid=current_user.userid, price=0)
-                db.session.add(order)
-                db.session.commit()
-                order_price = 0
-                for or_prod in order_product:
-                    productname = or_prod.productname
-                    productid = or_prod.productid
-                    orderid = order.orderid
-                    quantity = int(form[str(or_prod.productid)])
-                    price = or_prod.price * int(form[str(or_prod.productid)])
-                    db.session.add(Order_item(productid=productid, orderid=orderid, quantity=quantity, price=price, productname=productname))
-                    order_price += price
-                    or_prod.quantity -= quantity
-                order.price = order_price
-                db.session.commit()
-    else:
-        flash("You aren't login")
-        return redirect(url_for('login'))
+@app.route('/made_order', methods=['POST', 'GET'])
+@login_required
+def made_order():
+    if request.method == 'POST':
+        form = request.form
+        order_product = []
+        for key in form.keys():
+            product = Product.query.filter_by(productid=key).first()
+            if product.quantity >= int(form[key]) > 0:
+                order_product.append(product)
+            elif int(form[key]) != 0:
+                flash(f'Wrong quantity of the product {product.productname}')
+                return redirect(url_for('index'))
+        if order_product:
+            order = Orders(userid=current_user.userid, price=0)
+            db.session.add(order)
+            db.session.commit()
+            order_price = 0
+            for or_prod in order_product:
+                productname = or_prod.productname
+                productid = or_prod.productid
+                orderid = order.orderid
+                quantity = int(form[str(or_prod.productid)])
+                price = or_prod.price * int(form[str(or_prod.productid)])
+                db.session.add(Order_item(productid=productid, orderid=orderid, quantity=quantity, price=price, productname=productname))
+                order_price += price
+                or_prod.quantity -= quantity
+            order.price = order_price
+            db.session.commit()
+    return redirect(url_for('orders'))
+
+
+@app.route('/orders')
+def orders():
     orders = Orders.query.filter_by(userid=current_user.userid).order_by(Orders.orderid.desc()).all()
     or_items = []
     for ord in orders:
@@ -113,13 +114,12 @@ def order():
     return render_template('order.html', orders=orders, or_items=or_items)
 
 
-@app.route('/delete/<int:id_delete>', methods=['POST', 'GET'])
+@app.route('/delete/<int:id_delete>', methods=['POST'])
 def delete_order(id_delete):
     Order_item.query.filter_by(orderid=id_delete).delete()
     Orders.query.filter_by(orderid=id_delete).delete()
     db.session.commit()
-    return redirect(url_for('order'))
-
+    return redirect(url_for('orders'))
 
 
 if __name__ == '__main__':
