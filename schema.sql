@@ -1,30 +1,30 @@
 create table users(
-	UserId serial primary key,
-	UserName varchar(255) not null unique, 
-	Password varchar(255) not null
+	userid  serial primary key,
+	username varchar(255) not null unique,
+	password varchar(255) not null
 );
 
 create table product(
-	ProductId serial primary key,
-	ProductName varchar(255) not null,
-	Price integer not null,
-	Quantity integer not null
+	productid serial primary key,
+	productName varchar(255) not null,
+	price integer not null,
+	quantity integer not null
 );
 
 create table orders(
-	OrderId serial primary key,
-	UserId integer,
-	Price integer not null,
-	foreign key (UserId) references users(UserId)
+	orderid serial primary key,
+	userid integer,
+	price integer not null,
+	foreign key (userId) references users(userId)
 );
 
 create table order_item(
-	ItemId serial primary key,
-	ProductId integer,
-	OrderId integer,
-	Quantity integer not null,
-	Price integer not null,
-	ProductName varchar(255) not null,
-	foreign key (ProductId) references product(ProductId),
-	foreign key (OrderId) references orders(OrderId)
+	itemid serial primary key,
+	productid integer,
+	orderid integer,
+	quantity integer not null,
+	price integer not null,
+	productname varchar(255) not null,
+	foreign key (productId) references product(productid),
+	foreign key (orderId) references orders(orderid)
 );
