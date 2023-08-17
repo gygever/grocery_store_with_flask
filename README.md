@@ -20,7 +20,7 @@ This site is simple online store with the functionality of registration, authori
   - `$ git clone https://github.com/gygever/grocery_store_with_flask.git`
 3. go to project folder
 4. install dependencies from requirements.txt
-  - `$ py -m pip -r requirements.txt`
+  - `$ py -m pip install -r requirements.txt`
 5. run app
   - `$ flask --app app run`
 ## Webapp design
