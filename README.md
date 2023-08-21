@@ -23,5 +23,15 @@ This site is simple online store with the functionality of registration, authori
   - `$ py -m pip install -r requirements.txt`
 5. run app
   - `$ flask --app app run`
+## To start a project (Ubuntu Mate 22.04.3)
+1. install git
+2. take git repository
+  - `$ git clone https://github.com/gygever/grocery_store_with_flask.git`
+3. go to project folder
+4. install dependencies from requirements.txt
+  - `$ python3 -m pip install -r requirements.txt`
+  - if you get `Error: pg_config executable not found`, write `$ sudo apt-get install libpq_dev` and try to install requirements again 
+5. run app
+  - `$ python3 -m flask --app app run`
 ## Webapp design
 <img src='https://sun9-61.userapi.com/impg/gJFNmz72pwNf7qGya21-JHvpJyWOETclsVBocg/cWbfNg53PUs.jpg?size=1405x907&quality=96&sign=b34ebeac366d0b341d1af1274f62c245&type=album'>
